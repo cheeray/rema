@@ -16,4 +16,5 @@
 --
 
 -- You can use this file to load seed data into the database using SQL statements
-insert into Member (id, name, email, phone_number, dateModified, version) values (0, 'John Smith', 'john.smith@mailinator.com', '2125551212', now(), 0) 
+insert into Member (id, name, password, email, phone_number, dateModified, version) values (0, 'John Smith', '1234', 'john.smith@mailinator.com', '2125551212', now(), 0) 
+insert into Source (id, url, prefix, suffix, latitude, longitude, idKey, parser, dateModified, version) values (0, 'http://www.domain.com.au/Search/buy/?nosurl=1&mode=buy&&state=NSW&areas=Blue+Mountains+%26+Surrounds%2cNorth+Shore+-+Upper%2cCanterbury%2fBankstown%2cNorthern+Beaches%2cEastern+Suburbs%2cNorthern+Suburbs%2cHawkesbury%2cParramatta%2cHills%2cSt+George%2cInner+West%2cSutherland%2cLiverpool+%2f+Fairfield%2cSydney+City%2cMacarthur%2fCamden%2cWestern+Sydney%2cNorth+Shore+-+Lower&displmap=1', 'DomainGoogleMapNameSpace.MapFunctionality("map-canvas",', ');', 'la','lon', 'dkey', 'com.ray.rema.parser.PropertyJsonParser',  now(), 0)

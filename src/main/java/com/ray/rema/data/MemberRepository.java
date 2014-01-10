@@ -16,27 +16,18 @@
  */
 package com.ray.rema.data;
 
+import java.util.List;
+
 import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-
-import java.util.List;
 
 import com.ray.rema.model.Credentials;
 import com.ray.rema.model.Member;
 
 @ApplicationScoped
-public class MemberRepository {
-
-    @Inject
-    private EntityManager em;
-
-    public Member findById(Long id) {
-        return em.find(Member.class, id);
-    }
+public class MemberRepository extends Repository{
 
     public Member findbyCredentials(Credentials credentials) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -70,8 +61,4 @@ public class MemberRepository {
         criteria.select(member).orderBy(cb.asc(member.get("name")));
         return em.createQuery(criteria).getResultList();
     }
-
-	public void persist(Member member) {
-		em.persist(member);
-	}
 }

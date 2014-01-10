@@ -15,7 +15,9 @@ public class PropertyMeta extends AttributeMeta {
 	 * @author Chengwei.Yan
 	 */
 	public static enum PropertyField {
-		PRICE		("Price", "Price", String.class),
+		PRICE		("Price", "Market Price", Integer.class),
+		SOLD		("Sold", "Sold Price", Integer.class),
+		BEDS		("Beds", "Beds", Integer.class),
 		LAND		("Land", "Land Size", String.class),
 		DESC		("Description", "Description", String.class),
 		IMAGE		("Image", "Image", File.class);

@@ -35,5 +35,8 @@
         <!--<property name="jbossHome">/path/to/jboss/as</property> -->
         <!--</configuration> -->
    </container>
-
+   
+	<extension qualifier="selenium">
+        <property name="browser">*googlechrome C:\Program Files (x86)\Google\Chrome\Application\chrome.exe</property>
+    </extension>
 </arquillian>

@@ -43,17 +43,16 @@ public class Spider implements Crawler {
 
 	private final static Logger logger = Logger.getLogger(Spider.class.getName());;
 
-	private final static CrawlConfig config = new CrawlConfig();
+	private final CrawlConfig config;
 	
 	protected PoolingClientConnectionManager connectionManager;
 
 	protected DefaultHttpClient httpClient;
 
-	protected final Object mutex = new Object();
-
 	protected long lastFetchTime = 0;
 
-	public Spider() {
+	public Spider(CrawlConfig config) {
+		this.config = config;
 		HttpParams params = new BasicHttpParams();
 		HttpProtocolParamBean paramsBean = new HttpProtocolParamBean(params);
 		paramsBean.setVersion(HttpVersion.HTTP_1_1);
@@ -170,5 +169,9 @@ public class Spider implements Crawler {
 			result.append(line);
 		}
 		return result.toString();
+	}
+
+	public CrawlConfig getConfig() {
+		return config;
 	}
 }

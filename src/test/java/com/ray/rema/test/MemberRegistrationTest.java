@@ -24,9 +24,6 @@ import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import com.ray.rema.model.Member;
-import com.ray.rema.service.MemberService;
-import com.ray.rema.util.Resources;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
@@ -34,12 +31,21 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import com.ray.rema.crawler.CrawlConfig;
+import com.ray.rema.data.MemberRepository;
+import com.ray.rema.model.AbstractEntity;
+import com.ray.rema.model.Credentials;
+import com.ray.rema.model.Member;
+import com.ray.rema.service.MemberService;
+import com.ray.rema.util.IdGenerator;
+import com.ray.rema.util.Resources;
+
 @RunWith(Arquillian.class)
 public class MemberRegistrationTest {
     @Deployment
     public static Archive<?> createTestArchive() {
         return ShrinkWrap.create(WebArchive.class, "test.war")
-                .addClasses(MemberRegistrationTest.class, Member.class, MemberService.class, Resources.class)
+                .addClasses(MemberRegistrationTest.class, AbstractEntity.class, IdGenerator.class, Member.class, Credentials.class, MemberService.class, MemberRepository.class, Resources.class, CrawlConfig.class)
                 .addAsResource("META-INF/test-persistence.xml", "META-INF/persistence.xml")
                 .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
                 // Deploy our test datasource

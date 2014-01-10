@@ -8,10 +8,13 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.conn.params.ConnRoutePNames;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.junit.After;
 import org.junit.Before;
@@ -26,7 +29,12 @@ public class SpiderTest {
 
 	@Before
 	public void setUp() throws Exception {
-		spider = new Spider();
+		CrawlConfig config = new CrawlConfig();
+		config.setProxyHost("proxy4.au.harveynorman.com");
+		config.setProxyPort(3128);
+		config.setProxyUsername("corp\\srv_hnitjira_inet");
+		config.setProxyPassword("RKc5W9vVgXotXD7klDoG");
+		spider = new Spider(config);
 	}
 
 	@After
@@ -35,12 +43,13 @@ public class SpiderTest {
 	}
 
 	@Test
-	@Ignore
+	//@Ignore
 	public void test() throws IOException {
 		String content = spider
 				.crawl("http://www.domain.com.au/Search/buy/?nosurl=1&mode=buy&&state=NSW&areas=Blue+Mountains+%26+Surrounds%2cNorth+Shore+-+Upper%2cCanterbury%2fBankstown%2cNorthern+Beaches%2cEastern+Suburbs%2cNorthern+Suburbs%2cHawkesbury%2cParramatta%2cHills%2cSt+George%2cInner+West%2cSutherland%2cLiverpool+%2f+Fairfield%2cSydney+City%2cMacarthur%2fCamden%2cWestern+Sydney%2cNorth+Shore+-+Lower&displmap=1");
 		assertTrue(content
 				.contains("DomainGoogleMapNameSpace.MapFunctionality"));
+		System.out.println(content.substring(content.indexOf("DomainGoogleMapNameSpace.MapFunctionality")));
 	}
 
 	// HTTP GET request
@@ -81,14 +90,19 @@ public class SpiderTest {
 	@Test
 	@Ignore
 	public void testApacheClient() throws ClientProtocolException, IOException {
-		String url = "http://www.domain.com.au/Search/buy/?nosurl=1&mode=buy&&state=NSW&areas=Blue+Mountains+%26+Surrounds%2cNorth+Shore+-+Upper%2cCanterbury%2fBankstown%2cNorthern+Beaches%2cEastern+Suburbs%2cNorthern+Suburbs%2cHawkesbury%2cParramatta%2cHills%2cSt+George%2cInner+West%2cSutherland%2cLiverpool+%2f+Fairfield%2cSydney+City%2cMacarthur%2fCamden%2cWestern+Sydney%2cNorth+Shore+-+Lower&displmap=1";
-		 
-		HttpClient client = new DefaultHttpClient();
-		HttpGet request = new HttpGet(url);
-	 
+		String url = "http://www.google.com.au";
+		DefaultHttpClient client = new DefaultHttpClient();
+		client.getCredentialsProvider().setCredentials(
+			    new AuthScope("proxy4.au.harveynorman.com", 3128),
+			    new UsernamePasswordCredentials("corp\\srv_hnitjira_inet", "RKc5W9vVgXotXD7klDoG"));
+		
+		HttpHost target = new HttpHost("www.domain.com.au", 80, "http");
+		HttpHost proxy = new HttpHost("proxy4.au.harveynorman.com", 3128);
+		client.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
+        HttpGet req = new HttpGet("/");
+        
 		// add request header
-		request.addHeader("User-Agent", UserAgents.random());
-		HttpResponse response = client.execute(request);
+		HttpResponse response = client.execute(target, req);
 	 
 		System.out.println("Response Code : " 
 	                + response.getStatusLine().getStatusCode());
@@ -101,6 +115,8 @@ public class SpiderTest {
 		while ((line = rd.readLine()) != null) {
 			result.append(line);
 		}
+		
+		System.out.println(result.toString());
 	}
 
 }

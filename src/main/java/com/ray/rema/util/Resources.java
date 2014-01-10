@@ -16,19 +16,30 @@
  */
 package com.ray.rema.util;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Logger;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.InjectionPoint;
 import javax.faces.context.FacesContext;
+import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import com.ray.rema.crawler.CrawlConfig;
+import com.ray.rema.crawler.Crawler;
+import com.ray.rema.crawler.Spider;
+import com.ray.rema.model.Property;
+import com.ray.rema.parser.Parser;
+import com.ray.rema.parser.Parsers;
+import com.ray.rema.parser.PropertyJsonParser;
 
 /**
- * This class uses CDI to alias Java EE resources, such as the persistence context, to CDI beans
+ * This class uses CDI to alias Java EE resources, such as the persistence
+ * context, to CDI beans
  * 
  * <p>
  * Example injection on a managed bean field:
@@ -40,24 +51,42 @@ import com.ray.rema.crawler.CrawlConfig;
  * </pre>
  */
 public class Resources {
-    @Produces
-    @PersistenceContext
-    private EntityManager em;
+	@Produces
+	@PersistenceContext
+	private EntityManager em;
 
-    @Produces
-    public Logger produceLog(InjectionPoint injectionPoint) {
-        return Logger.getLogger(injectionPoint.getMember().getDeclaringClass().getName());
-    }
+	@Produces
+	public Logger produceLog(InjectionPoint injectionPoint) {
+		return Logger.getLogger(injectionPoint.getMember().getDeclaringClass()
+				.getName());
+	}
 
-    @Produces
-    @RequestScoped
-    public FacesContext produceFacesContext() {
-        return FacesContext.getCurrentInstance();
-    }
+	@Produces
+	@RequestScoped
+	public FacesContext produceFacesContext() {
+		return FacesContext.getCurrentInstance();
+	}
 
-    @Produces
-    public CrawlConfig produceCrawlConfig(InjectionPoint injectionPoint) {
-    	final CrawlConfig cfg = new CrawlConfig();
-        return cfg;
-    }
+	@Produces
+	public Crawler produceCrawler() {
+		final CrawlConfig config = new CrawlConfig();
+		config.setProxyHost("proxy4.au.harveynorman.com");
+		config.setProxyPort(3128);
+		config.setProxyUsername("corp\\srv_hnitjira_inet");
+		config.setProxyPassword("RKc5W9vVgXotXD7klDoG");
+		final Crawler crawler = new Spider(config);
+		return crawler;
+	}
+
+	@Produces
+	@Named("parsers")
+	@ApplicationScoped
+	public static Parsers produceParsers() {
+		final Parsers parsers = new Parsers();
+		final Map<String, Parser<Property>> ps = new HashMap<>();
+		parsers.setParsers(ps);
+		ps.put(PropertyJsonParser.class.getName(),
+				new PropertyJsonParser());
+		return parsers;
+	}
 }

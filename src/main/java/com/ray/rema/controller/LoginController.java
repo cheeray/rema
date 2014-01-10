@@ -2,6 +2,7 @@ package com.ray.rema.controller;
 
 import java.io.Serializable;
 
+import javax.enterprise.context.RequestScoped;
 import javax.enterprise.context.SessionScoped;
 import javax.enterprise.inject.Produces;
 import javax.faces.application.FacesMessage;
@@ -14,7 +15,7 @@ import com.ray.rema.model.Member;
 import com.ray.rema.service.MemberService;
 
 @Named
-@SessionScoped
+@RequestScoped
 public class LoginController implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -36,7 +37,7 @@ public class LoginController implements Serializable {
     		FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put(Member.SESSION_KEY, member);
     		FacesContext.getCurrentInstance().addMessage(null,
     				new FacesMessage(SUCCESS_MESSAGE));
-    		return "home.xhtml";
+    		return "/dashboard.jsf";
     	}
 
         FacesContext.getCurrentInstance().addMessage(null,
@@ -50,6 +51,7 @@ public class LoginController implements Serializable {
     }
     
     @Produces
+    @SessionScoped
     @Named
     public Member getMember() {
         return member;
