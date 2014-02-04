@@ -14,6 +14,7 @@ import com.ray.rema.model.Pattern;
 import com.ray.rema.model.Property;
 import com.ray.rema.parser.Parser;
 import com.ray.rema.parser.PropertyJsonParser;
+import java.util.logging.Level;
 
 @Stateless
 public class ParsingService {
@@ -21,7 +22,7 @@ public class ParsingService {
 	@Inject
 	Logger logger;
 
-	final Map<String, Parser<Property>> parsers = new HashMap<>();
+	final Map<String, Parser<Property>> parsers = new HashMap<String, Parser<Property>>();
 	
 	@PostConstruct
 	private void init() {
@@ -31,10 +32,10 @@ public class ParsingService {
 	
 	public List<Property> parse(String content, String parserName, Pattern pattern) {
 		final Parser<Property> parser = parsers.get(parserName);
-    	logger.info("Using parser " + parser);
-    	final List<Property> ps = new ArrayList<>();
+    	logger.log(Level.INFO, "Using parser {0}", parser);
+    	final List<Property> ps = new ArrayList<Property>();
 		for (Property p : parser.parse(content, pattern)) {
-			logger.info("Persist one property: " + p);
+			logger.log(Level.INFO, "Persist one property: {0}", p);
 			ps.add(p);
 		}
     	return ps;

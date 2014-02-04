@@ -23,14 +23,14 @@ public class PropertyJsonParser implements Parser<Property> {
 		final int start = content.indexOf(pattern.getPrefix());
 		content = content.substring(start + pattern.getPrefix().length());
 		final int end = content.indexOf(pattern.getSuffix());
-		final List<Property> ps = new ArrayList<>();
+		final List<Property> ps = new ArrayList<Property>();
 		try {
 			final JSONArray array = new JSONArray(content);
 			
 			for (int i = 0; i < array.length(); i++) {
 				final JSONObject o = (JSONObject) array.get(i);
 				final Property property = new Property();
-				final Set<PropertyInfo> attributeSets = new HashSet<>();
+				final Set<PropertyInfo> attributeSets = new HashSet<PropertyInfo>();
 				property.setAttributeSets(attributeSets);
 				final Geolocation geo = new Geolocation();
 				property.setGeo(geo);

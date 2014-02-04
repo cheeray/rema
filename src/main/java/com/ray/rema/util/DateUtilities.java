@@ -287,7 +287,7 @@ public abstract class DateUtilities {
 	 * @return a list of matched dates.
 	 */
 	public static List<Date> listDates(Date startDate, Date endDate) {
-		final List<Date> dates = new ArrayList<>();
+		final List<Date> dates = new ArrayList<Date>();
 		final Calendar cal = Calendar.getInstance();
 		cal.setTime(startDate);
 		Date date = startDate;

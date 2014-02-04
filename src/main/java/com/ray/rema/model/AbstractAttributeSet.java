@@ -49,7 +49,6 @@ public abstract class AbstractAttributeSet<E extends AbstractEntity, M extends A
 	 * Constructor for JPA.
 	 */
 	public AbstractAttributeSet() {
-		;
 	}
 
 	/**
@@ -76,6 +75,7 @@ public abstract class AbstractAttributeSet<E extends AbstractEntity, M extends A
 		return owner;
 	}
 
+        @Override
 	public void setOwner(E owner) {
 		this.owner = owner;
 	}
@@ -93,6 +93,7 @@ public abstract class AbstractAttributeSet<E extends AbstractEntity, M extends A
 	
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
 	@JoinColumn(name = "attributeSetId", referencedColumnName = "id")
+        @Override
 	public Collection<A> getAttributes() {
 		return attributes;
 	}
@@ -106,7 +107,7 @@ public abstract class AbstractAttributeSet<E extends AbstractEntity, M extends A
 	@Override
 	public Map<M, A> mapAttributeToMeta() {
 		if (attributesMap == null) {
-			attributesMap = new HashMap<>();
+			attributesMap = new HashMap<M, A>();
 			for (A attr : attributes) {
 				attributesMap.put(attr.getMeta(), attr);
 			}

@@ -108,7 +108,7 @@ public class URLCanonicalizer {
 		}
 
 		final String[] pairs = queryString.split("&");
-		final Map<String, String> params = new HashMap<>(pairs.length);
+		final Map<String, String> params = new HashMap<String, String>(pairs.length);
 
 		for (final String pair : pairs) {
 			if (pair.length() == 0) {
@@ -129,7 +129,7 @@ public class URLCanonicalizer {
 				break;
 			}
 		}
-		return new TreeMap<>(params);
+		return new TreeMap<String, String>(params);
 	}
 
 	/**

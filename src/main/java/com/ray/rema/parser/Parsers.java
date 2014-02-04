@@ -9,7 +9,7 @@ import com.ray.rema.model.Property;
 public class Parsers implements Serializable{
 	private static final long serialVersionUID = 1L;
 	
-	private Map<String, Parser<Property>> parsers = new HashMap<>();
+	private Map<String, Parser<Property>> parsers = new HashMap<String, Parser<Property>>();
 
 	public Map<String, Parser<Property>> getParsers() {
 		return parsers;

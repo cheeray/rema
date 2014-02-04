@@ -83,7 +83,7 @@ public class Resources {
 	@ApplicationScoped
 	public static Parsers produceParsers() {
 		final Parsers parsers = new Parsers();
-		final Map<String, Parser<Property>> ps = new HashMap<>();
+		final Map<String, Parser<Property>> ps = new HashMap<String, Parser<Property>>();
 		parsers.setParsers(ps);
 		ps.put(PropertyJsonParser.class.getName(),
 				new PropertyJsonParser());
