@@ -23,8 +23,15 @@
     <title>${artifactId}</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <h:outputStylesheet name="css/screen.css" />
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&amp;sensor=false"></script>
+    <h:outputScript library="js" name="dat.gui.js" target="head" />
+    <h:outputScript library="js" name="detector.js" target="head" />
+    <h:outputScript library="js" name="rema.js" target="head" />
+    <h:outputScript library="js" name="stats.js" target="head" />
+    <h:outputScript library="js" name="three.min.js" target="head" />
 </h:head>
 <h:body>
+    
     <div id="container">
         <div class="dualbrand">
             <img src="resources/gfx/dualbrand_logo.png" />

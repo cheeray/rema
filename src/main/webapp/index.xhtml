@@ -19,11 +19,15 @@
     xmlns:ui="http://java.sun.com/jsf/facelets"
     xmlns:f="http://java.sun.com/jsf/core"
     xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
     template="/WEB-INF/templates/default.xhtml">
     <ui:define name="content">
-        <h1>Welcome to JBoss!</h1>
-
-        <div>
+       <rich:tabPanel switchType="client">
+           <rich:tab header="Map" >
+               <div id="map"></div>
+           </rich:tab>
+           <rich:tab header="Register">
+                <div>
             <p>You have successfully deployed a Java EE 6 Enterprise
                 Application.</p>
             <h3>Your application can run on:</h3>
@@ -60,7 +64,10 @@
                 </h:panelGrid>
             </p>
         </h:form>
-        <h2>Members</h2>
+           </rich:tab>
+           
+           <rich:tab header="Member">
+              <h2>Members</h2>
         <h:panelGroup rendered="#{empty members}">
             <em>No registered members.</em>
         </h:panelGroup>
@@ -93,5 +100,13 @@
                     href="#{request.contextPath}/rest/members">/rest/members</a>
             </f:facet>
         </h:dataTable>
+           </rich:tab>
+       </rich:tabPanel>
+       
+        <script type="javascript">
+           $('#map').ready(function(){rema.init()});
+        </script>
+
+        
     </ui:define>
 </ui:composition>

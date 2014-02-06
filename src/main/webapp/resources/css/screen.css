@@ -200,3 +200,8 @@ input {
   color:#3883ce;
   text-decoration:none; 
 }
+
+#map {
+    height: 400px;
+    width: 100%;
+}

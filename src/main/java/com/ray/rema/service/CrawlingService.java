@@ -35,7 +35,7 @@ public class CrawlingService {
 	
 	public void crawl(Source source) {
     	try {
-    		for (Property p : parsingService.parse(crawler.crawl(source.getUrl()), source.getParser(), source.getPattern())) {
+    		for (Property p : parsingService.parse(crawler.crawl(source.getUrl()), source)) {
     			logger.info("Persist one property: " + p);
     			sourceRepo.persist(p);
     		}

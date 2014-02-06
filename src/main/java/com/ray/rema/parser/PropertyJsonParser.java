@@ -15,11 +15,13 @@ import com.ray.rema.model.Geolocation;
 import com.ray.rema.model.Pattern;
 import com.ray.rema.model.Property;
 import com.ray.rema.model.PropertyInfo;
+import com.ray.rema.model.Source;
 
 public class PropertyJsonParser implements Parser<Property> {
 
 	@Override
-	public Collection<Property> parse(String content, Pattern pattern) {
+	public Collection<Property> parse(String content, Source source) {
+                final Pattern pattern = source.getPattern();
 		final int start = content.indexOf(pattern.getPrefix());
 		content = content.substring(start + pattern.getPrefix().length());
 		final int end = content.indexOf(pattern.getSuffix());
