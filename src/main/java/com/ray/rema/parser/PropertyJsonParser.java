@@ -38,8 +38,8 @@ public class PropertyJsonParser implements Parser<Property> {
 				property.setGeo(geo);
 				o.get(pattern.getIdKey());
 				final GeoKey geoKey = pattern.getGeoKey();
-				geo.setLatitude(Double.valueOf((String) o.get(geoKey.getLatitude())));
-				geo.setLongitude(Double.valueOf((String) o.get(geoKey.getLongitude())));
+				geo.setLatitude((Double)o.get(geoKey.getLatitude()));
+				geo.setLongitude((Double) o.get(geoKey.getLongitude()));
 				
 				ps.add(property);
 			}

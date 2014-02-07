@@ -12,7 +12,6 @@ import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.Transient;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 
@@ -79,13 +78,15 @@ public abstract class AbstractEntity implements Serializable {
 		if (uuid == null) {
 			uuid = IdGenerator.uuid();
 		}
+                if (dateModified == null) {
+                    dateModified = new Date();
+                }
 	}
 
 	/**
 	 * Return a business key string.
 	 * @return a string represents the business key.
 	 */
-	@Transient
 	public String bizKey(){
 		throw new UnsupportedOperationException("Not implemented.");
 	}

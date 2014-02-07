@@ -17,60 +17,63 @@
  * MA 02110-1301  USA
  */
 
-var rema = window.rema = window.rema || {version: "1.0"};
+var rema = window.rema = window.rema || {version: "1.0", properties: []};
 rema.init = function() {
     if (!Detector.webgl) {
         Detector.addGetWebGLMessage();
         return;
     }
 
-    var container = document.getElementById('map');
+    rema.container = document.getElementById('map');
 
-    rema.map = new google.maps.Map(container, {
-        zoom: 3,
+    rema.map = new google.maps.Map(rema.container, {
+        zoom: 4,
         mapTypeControl: false,
-        center: new google.maps.LatLng(10, 0),
+        center: new google.maps.LatLng(-33.8678500, 151.2073200),
         mapTypeId: google.maps.MapTypeId.ROADMAP,
         styles: rema.layer.styles
     });
 
-    
-    new rema.layer({map: rema.map}, function(layer) {
+    rema.draw = function() {
 
-        var geometry = new THREE.Geometry(),
-                texture = new THREE.Texture(rema.generateSprite()),
-                material, particles;
+        rema.geometry = new THREE.Geometry();
+        rema.texture = new THREE.Texture(rema.generateSprite());
 
-        photos.forEach(function(photo) {
-            var location = new google.maps.LatLng(photo[0], photo[1]),
-                    vertex = layer.fromLatLngToVertex(location);
 
-            geometry.vertices.push(vertex);
+        $.each(rema.properties, function(i, p) {
+            var location = new google.maps.LatLng(p.geo.latitude, p.geo.longtitude);
+            var vertex = rema.layer.fromLatLngToVertex(location);
+
+            rema.geometry.vertices.push(vertex);
         });
 
-        texture.needsUpdate = true;
 
-        material = new THREE.ParticleBasicMaterial({
+        rema.texture.needsUpdate = true;
+
+        rema.material = new THREE.ParticleBasicMaterial({
             size: 20,
-            map: texture,
+            map: rema.texture,
             opacity: 0.3,
             blending: THREE.AdditiveBlending,
             depthTest: false,
             transparent: true
         });
 
-        particles = new THREE.ParticleSystem(geometry, material);
-        layer.add(particles);
+        rema.particles = new THREE.ParticleSystem(rema.geometry, rema.material);
+        rema.layer.add(rema.particles);
 
-        gui = new dat.GUI();
+        rema.gui = new dat.GUI();
 
-        function update() {
-            layer.render();
-        }
+        rema.gui.add(rema.material, 'size', 2, 100).onChange(rema.layer.render);
+        rema.gui.add(rema.material, 'opacity', 0.1, 1).onChange(rema.layer.render);
 
-        gui.add(material, 'size', 2, 100).onChange(update);
-        gui.add(material, 'opacity', 0.1, 1).onChange(update);
-
+    };
+    rema.layer = new rema.layer({map: rema.map}, rema.drawProperties);
+};
+rema.drawProperties = function() {
+    $.getJSON(rema.propertiesPath, function(data) {
+        rema.properties = data;
+        rema.draw();
     });
 };
 rema.layer = function(options, callback) {
@@ -351,3 +354,189 @@ rema.layer.styles = [
         ]
     }
 ];
+
+rema.tube = function() {
+    return this;
+};
+rema.tube.prototype = {
+    constructor: rema.tube,
+    targetRotation: 0,
+    targetRotationOnMouseDown: 0,
+    mouseX: 0,
+    mouseXOnMouseDown: 0,
+    windowHalfX: window.innerWidth / 2,
+    windowHalfY: window.innerHeight / 2,
+    container: null,
+    stats: null,
+    camera: null,
+    scene: null,
+    renderer: null,
+    cube: null,
+    plane: null,
+    init: function() {
+
+        this.targetRotation = 0;
+        this.targetRotationOnMouseDown = 0;
+
+        this.mouseX = 0;
+        this.mouseXOnMouseDown = 0;
+
+        this.windowHalfX = window.innerWidth / 2;
+        this.windowHalfY = window.innerHeight / 2;
+
+        this.container = document.createElement('div');
+        document.body.appendChild(this.container);
+
+        var info = document.createElement('div');
+        info.style.position = 'absolute';
+        info.style.top = '10px';
+        info.style.width = '100%';
+        info.style.textAlign = 'center';
+        info.innerHTML = 'Drag to spin the cube';
+        this.container.appendChild(info);
+
+        this.camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 1000);
+        this.camera.position.y = 150;
+        this.camera.position.z = 500;
+
+        this.scene = new THREE.Scene();
+
+        // Cube
+
+        var geometry = new THREE.CubeGeometry(200, 200, 200);
+
+        for (var i = 0; i < geometry.faces.length; i += 2) {
+
+            var hex = Math.random() * 0xffffff;
+            geometry.faces[ i ].color.setHex(hex);
+            geometry.faces[ i + 1 ].color.setHex(hex);
+
+        }
+
+        var material = new THREE.MeshBasicMaterial({vertexColors: THREE.FaceColors, overdraw: 0.5});
+
+        this.cube = new THREE.Mesh(geometry, material);
+        this.cube.position.y = 150;
+        this.scene.add(this.cube);
+
+        // Plane
+
+        var geometry = new THREE.PlaneGeometry(200, 200);
+        geometry.applyMatrix(new THREE.Matrix4().makeRotationX(-Math.PI / 2));
+
+        var material = new THREE.MeshBasicMaterial({color: 0xe0e0e0, overdraw: 0.5});
+
+        this.plane = new THREE.Mesh(geometry, material);
+        this.scene.add(this.plane);
+
+        this.renderer = new THREE.CanvasRenderer();
+        this.renderer.setSize(window.innerWidth, window.innerHeight);
+
+        this.container.appendChild(this.renderer.domElement);
+
+        this.stats = new Stats();
+        this.stats.domElement.style.position = 'absolute';
+        this.stats.domElement.style.top = '0px';
+        this.container.appendChild(this.stats.domElement);
+
+        document.addEventListener('mousedown', this.onDocumentMouseDown, false);
+        document.addEventListener('touchstart', this.onDocumentTouchStart, false);
+        document.addEventListener('touchmove', this.onDocumentTouchMove, false);
+
+        //
+
+        window.addEventListener('resize', this.onWindowResize, false);
+
+    },
+    onWindowResize: function() {
+
+        this.windowHalfX = window.innerWidth / 2;
+        this.windowHalfY = window.innerHeight / 2;
+
+        this.camera.aspect = window.innerWidth / window.innerHeight;
+        this.camera.updateProjectionMatrix();
+
+        this.renderer.setSize(window.innerWidth, window.innerHeight);
+
+    },
+    onDocumentMouseDown: function(event) {
+
+        event.preventDefault();
+
+        document.addEventListener('mousemove', this.onDocumentMouseMove, false);
+        document.addEventListener('mouseup', this.onDocumentMouseUp, false);
+        document.addEventListener('mouseout', this.onDocumentMouseOut, false);
+
+        this.mouseXOnMouseDown = event.clientX - this.windowHalfX;
+        this.targetRotationOnMouseDown = this.targetRotation;
+
+    },
+    onDocumentMouseMove: function(event) {
+
+        this.mouseX = event.clientX - this.windowHalfX;
+
+        this.targetRotation = this.targetRotationOnMouseDown + (this.mouseX - this.mouseXOnMouseDown) * 0.02;
+
+    },
+    onDocumentMouseUp: function(event) {
+
+        document.removeEventListener('mousemove', this.onDocumentMouseMove, false);
+        document.removeEventListener('mouseup', this.onDocumentMouseUp, false);
+        document.removeEventListener('mouseout', this.onDocumentMouseOut, false);
+
+    },
+    onDocumentMouseOut: function(event) {
+
+        document.removeEventListener('mousemove', this.onDocumentMouseMove, false);
+        document.removeEventListener('mouseup', this.onDocumentMouseUp, false);
+        document.removeEventListener('mouseout', this.onDocumentMouseOut, false);
+
+    },
+    onDocumentTouchStart: function(event) {
+
+        if (event.touches.length === 1) {
+
+            event.preventDefault();
+
+            this.mouseXOnMouseDown = event.touches[ 0 ].pageX - this.windowHalfX;
+            this.targetRotationOnMouseDown = this.targetRotation;
+
+        }
+
+    },
+    onDocumentTouchMove: function(event) {
+
+        if (event.touches.length === 1) {
+
+            event.preventDefault();
+
+            this.mouseX = event.touches[ 0 ].pageX - this.windowHalfX;
+            this.targetRotation = this.targetRotationOnMouseDown + (this.mouseX - this.mouseXOnMouseDown) * 0.05;
+
+        }
+
+    },
+    //
+
+    animate: function() {
+
+        requestAnimationFrame(this.animate);
+
+        this.render();
+        this.stats.update();
+
+    },
+    render: function() {
+
+        this.plane.rotation.y = this.cube.rotation.y += (this.targetRotation - this.cube.rotation.y) * 0.05;
+        this.renderer.render(this.scene, this.camera);
+
+    }
+};
+
+
+
+
+//var tube = new rema.tube();
+//tube.init();
+//tube.animate();

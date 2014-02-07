@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
+import javax.persistence.FetchType;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToMany;
 
@@ -22,7 +23,7 @@ public abstract class AbstractAttributeOwner<E extends AbstractEntity, M extends
 	/** Collection of attribute sets. */
 	private Set<AS> attributeSets;
 
-	@OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@Override
 	public Set<AS> getAttributeSets() {
 		return attributeSets;

@@ -16,4 +16,8 @@ public class Repository {
 	public <T extends AbstractEntity> void persist(T entity) {
 		em.persist(entity);
 	}
+        
+        public <T extends AbstractEntity> T merge(T entity) {
+		return em.merge(entity);
+	}
 }

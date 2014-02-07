@@ -26,6 +26,45 @@
            <rich:tab header="Map" >
                <div id="map"></div>
            </rich:tab>
+           <rich:tab header="Properties">
+              <h2>Properties</h2>
+        <h:panelGroup rendered="#{empty properties}">
+            <em>No properties.</em>
+        </h:panelGroup>
+        <h:dataTable var="_property" value="#{properties}"
+            rendered="#{not empty properties}"
+            styleClass="simpletablestyle">
+            <h:column>
+                <f:facet name="header">Id</f:facet>
+                #{_property.id}
+            </h:column>
+            <h:column>
+                <f:facet name="header">Street</f:facet>
+                #{_property.address.street}
+            </h:column>
+            <h:column>
+                <f:facet name="header">Surburb</f:facet>
+                #{_property.address.surburb}
+            </h:column>
+            <h:column>
+                <f:facet name="header">State</f:facet>
+                #{_property.address.state}
+            </h:column>
+            <h:column>
+                <f:facet name="header">Postcode</f:facet>
+                #{_property.address.postcode}
+            </h:column>
+            <h:column>
+                <f:facet name="header">REST URL</f:facet>
+                <a
+                    href="#{request.contextPath}/rest/properties/#{_property.id}">/rest/properties/#{_property.id}</a>
+            </h:column>
+            <f:facet name="footer">
+            REST URL for all properties: <a
+                    href="#{request.contextPath}/rest/properties">/rest/properties</a>
+            </f:facet>
+        </h:dataTable>
+           </rich:tab>
            <rich:tab header="Register">
                 <div>
             <p>You have successfully deployed a Java EE 6 Enterprise
@@ -102,11 +141,7 @@
         </h:dataTable>
            </rich:tab>
        </rich:tabPanel>
-       
-        <script type="javascript">
-           $('#map').ready(function(){rema.init()});
-        </script>
-
+       <rich:jQuery selector="#map" query="focus();alert('loaded');rema.propertiesPath = '#{request.contextPath}/rest/properties';rema.init();" timing="domready"/>
         
     </ui:define>
 </ui:composition>
