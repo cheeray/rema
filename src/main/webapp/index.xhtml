@@ -22,6 +22,7 @@
     xmlns:rich="http://richfaces.org/rich"
     template="/WEB-INF/templates/default.xhtml">
     <ui:define name="content">
+        <script lang="javascript">var propertiesPath = '#{request.contextPath}/rest/properties', mapId ='map';</script>
        <rich:tabPanel switchType="client">
            <rich:tab header="Map" >
                <div id="map"></div>
@@ -141,7 +142,6 @@
         </h:dataTable>
            </rich:tab>
        </rich:tabPanel>
-       <rich:jQuery selector="#map" query="focus();alert('loaded');rema.propertiesPath = '#{request.contextPath}/rest/properties';rema.init();" timing="domready"/>
         
     </ui:define>
 </ui:composition>
